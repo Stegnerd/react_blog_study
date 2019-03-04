@@ -14,9 +14,9 @@ import jsonPlaceholder from "../apis/jsonPlaceholder";
 
 export const fetchPost = () => async dispatch => {
   // redux thunk allows us to return functions
-  var response = jsonPlaceholder.get("/posts");
+  const response = await jsonPlaceholder.get("/posts");
 
   // we use redux thunk to manually dispatch after we have gotten our data back
   // that way there is no race condition
-  dispatch({ type: "FETCH_POSTS", payload: response });
+  dispatch({ type: "FETCH_POSTS", payload: response.data });
 };

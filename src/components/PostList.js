@@ -7,13 +7,35 @@ class PostList extends React.Component {
     this.props.fetchPost();
   }
 
+  renderList() {
+    return this.props.posts.map(post => {
+      return (
+        <div className="item" key={post.id}>
+          <i className="large middle aligned icon user" />
+          <div className="content">
+            <div className="description">
+              <h2>{post.title}</h2>
+              <p>{post.body}</p>
+            </div>
+          </div>
+        </div>
+      );
+    });
+  }
+
   render() {
-    return <div>Post List</div>;
+    return <div className="ui relaxed divided list">{this.renderList()}</div>;
   }
 }
 
+// reducer was called posts, so when we want to access the data from that call
+// use posts
+const mapStateToProps = state => {
+  return { posts: state.posts };
+};
+
 // pass null when you don't have any state that you want to get into the component
 export default connect(
-  null,
+  mapStateToProps,
   { fetchPost }
 )(PostList);
