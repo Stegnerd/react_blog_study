@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 
 import postsReducer from "./postsReducer";
+import usersReducer from "./usersReducer";
 
 // rules of reducers
 // 1. Must return any value besides 'undefined'
@@ -37,5 +38,6 @@ import postsReducer from "./postsReducer";
  */
 
 export default combineReducers({
-  posts: postsReducer
+  posts: postsReducer,
+  users: usersReducer
 });
