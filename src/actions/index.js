@@ -22,17 +22,48 @@ export const fetchPost = () => async dispatch => {
   dispatch({ type: "FETCH_POSTS", payload: response.data });
 };
 
-// id of the user we want to fetch
-// export const fetchUser = id => async dispatch => {
+//id of the user we want to fetch
+// this gets called each time the app starts up, redux creates the action creaters once on start up
+// the inner part gets memoized
+// side effect, can only get the user one time and only one time
+// export const fetchUser = id => dispatch => {
+//   _fetchUser(id, dispatch);
+// };
+
+// // _ means private
+// const _fetchUser = _.memoize(async (id, dispatch) => {
 //   const response = await jsonPlaceholder.get(`/users/${id}`);
 
 //   dispatch({ type: "FETCH_USER", payload: response.data });
-// };
+// });
 
-export const fetchUser = function(id) {
-  return _.memoize(async function(dispatch) {
-    const response = await jsonPlaceholder.get(`/users/${id}`);
+export const fetchUser = id => async dispatch => {
+  const response = await jsonPlaceholder.get(`/users/${id}`);
 
-    dispatch({ type: "FETCH_USER", payload: response.data });
-  });
+  dispatch({ type: "FETCH_USER", payload: response.data });
+};
+
+// redux thunk lets us return a function in action creator
+// looks like this function () {
+//   return function (){}
+// }
+export const fetchPostsAndUsers = () => async (dispatch, getState) => {
+  // wait until the inner function resolves before we dispatch the outter one
+  await dispatch(fetchPost());
+
+  // // goes through all posts in state and pulls unique user id
+  // const userIds = _.uniq(_.map(getState().posts, "userId"));
+
+  // // we don't need to away this one, doesn't matter
+  // userIds.forEach(id => dispatch(fetchUser(id)));
+
+  // OR DO THE FOLLOWING BELOW
+
+  // chains argument result of this and passes it as first argument into map, then result of map is passed into the next argument
+  // looks like this uniq(map(getState().posts, "userId")).foreach(id => dispatch(fetchUser(id))).value
+  _.chain(getState().posts)
+    .map("userId")
+    .uniq()
+    .forEach(id => dispatch(fetchUser(id)))
+    .value();
 };
